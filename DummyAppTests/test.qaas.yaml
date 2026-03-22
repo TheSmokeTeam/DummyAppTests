@@ -1,0 +1,31 @@
+MetaData:
+  Team: Smoke
+  System: DummyApp
+
+DataSources:
+  - Name: RequestData
+    Generator: FromFileSystem
+    GeneratorConfiguration:
+      DataArrangeOrder: AsciiAsc
+      FileSystem:
+        Path: Requests
+
+Sessions:
+  - Name: DummyAppSession
+    Transactions:
+      - Name: GetServerData
+        DataSourceNames: [RequestData]
+        TimeoutMs: 5000
+        Http:
+          BaseAddress: http://127.0.0.1
+          Method: Get
+          Port: 8080
+          Route: data
+
+Assertions:
+  - Name: GetServerDataReturns200
+    Assertion: HttpStatus
+    SessionNames: [DummyAppSession]
+    AssertionConfiguration:
+      StatusCode: 200
+      OutputNames: [GetServerData]
