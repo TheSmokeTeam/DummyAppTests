@@ -17,7 +17,7 @@
     <None Update="test.qaas.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Requests\**\*">
+    <None Update="TestData\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
