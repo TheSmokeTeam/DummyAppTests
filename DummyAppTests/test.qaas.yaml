@@ -23,8 +23,8 @@ Sessions:
           Username: admin
           Password: admin
           Port: 5672
-          ExchangeName: amq.direct
-          RoutingKey: dummyapp
+          ExchangeName: input
+          RoutingKey: /
     Consumers:
       - Name: Consumer
         TimeoutMs: 5000
@@ -33,8 +33,8 @@ Sessions:
           Username: admin
           Password: admin
           Port: 5672
-          ExchangeName: amq.direct
-          RoutingKey: dummyapp
+          ExchangeName: output
+          RoutingKey: /
         Deserialize:
           Deserializer: Json
 
