@@ -82,6 +82,9 @@ jobs:
           else:
               raise SystemExit("RabbitMQ management API never became ready.")
 
+          exchange_def = b'{"type":"direct","auto_delete":false,"durable":false,"internal":false,"arguments":{}}'
+          request("PUT", "/exchanges/%2F/input", exchange_def)
+          request("PUT", "/exchanges/%2F/output", exchange_def)
           request(
               "PUT",
               "/queues/%2F/input-smoke",
