@@ -18,7 +18,7 @@ using QaaS.Runner.Sessions.Session.Builders;
 
 namespace DummyAppTests;
 
-public sealed class RunnerExecutionBuilderConfigurator : IExecutionBuilderConfigurator
+public sealed class RunnerExecutionBuilderConfigurator
 {
     public void Configure(ExecutionBuilder executionBuilder)
     {
