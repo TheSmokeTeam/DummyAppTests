@@ -47,8 +47,8 @@ public sealed class RunnerExecutionBuilderConfigurator
                 Username = "admin",
                 Password = "admin",
                 Port = 5672,
-                ExchangeName = "amq.direct",
-                RoutingKey = "dummyapp"
+                ExchangeName = "input",
+                RoutingKey = "/"
             });
 
         var consumer = new ConsumerBuilder()
@@ -60,8 +60,8 @@ public sealed class RunnerExecutionBuilderConfigurator
                 Username = "admin",
                 Password = "admin",
                 Port = 5672,
-                ExchangeName = "amq.direct",
-                RoutingKey = "dummyapp"
+                ExchangeName = "output",
+                RoutingKey = "/"
             })
             .WithDeserializer(new DeserializeConfig
             {
