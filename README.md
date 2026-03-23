@@ -13,5 +13,5 @@ Sample QaaS Runner project for the code quick start.
 
 ```bash
 dotnet restore
-dotnet run --project DummyAppTests/DummyAppTests.csproj
+dotnet run --project DummyAppTests/DummyAppTests.csproj -- run DummyAppTests/test.qaas.yaml --no-env
 ```

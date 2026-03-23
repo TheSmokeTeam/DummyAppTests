@@ -16,13 +16,7 @@ using QaaS.Runner.Sessions.Actions.Consumers.Builders;
 using QaaS.Runner.Sessions.Actions.Publishers.Builders;
 using QaaS.Runner.Sessions.Session.Builders;
 
-Directory.SetCurrentDirectory(AppContext.BaseDirectory);
-
-var effectiveArgs = args.Length == 0
-    ? ["run", "test.qaas.yaml", "--no-env"]
-    : args;
-
-var runner = Bootstrap.New(effectiveArgs);
+var runner = Bootstrap.New(args);
 var executionBuilder = runner.ExecutionBuilders.Single();
 
 var dataSource = new DataSourceBuilder()
@@ -33,7 +27,7 @@ var dataSource = new DataSourceBuilder()
         DataArrangeOrder = DataArrangeOrder.AsciiAsc,
         FileSystem = new FileSystemConfig
         {
-            Path = "TestData"
+            Path = Path.Combine(AppContext.BaseDirectory, "TestData")
         }
     });
 
