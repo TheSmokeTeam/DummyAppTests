@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CONFIGURATION: Release
+
+jobs:
+  build-smoke:
+    runs-on: ubuntu-latest
+
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: admin
+          RABBITMQ_DEFAULT_PASS: admin
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore DummyAppTests.sln
+
+      - name: Build
+        run: dotnet build DummyAppTests.sln -c ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Smoke sample
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY' &
+          import base64
+          import json
+          import time
+          import urllib.error
+          import urllib.request
+
+          auth = base64.b64encode(b"admin:admin").decode("ascii")
+          headers = {
+              "Authorization": f"Basic {auth}",
+              "Content-Type": "application/json",
+          }
+
+          def request(method, path, body=None):
+              req = urllib.request.Request(
+                  f"http://127.0.0.1:15672/api{path}",
+                  data=body,
+                  headers=headers,
+                  method=method,
+              )
+              with urllib.request.urlopen(req, timeout=5) as response:
+                  return response.read()
+
+          for _ in range(30):
+              try:
+                  request("GET", "/overview")
+                  break
+              except Exception:
+                  time.sleep(2)
+          else:
+              raise SystemExit("RabbitMQ management API never became ready.")
+
+          request(
+              "PUT",
+              "/queues/%2F/input-smoke",
+              b'{"auto_delete":true,"durable":false,"arguments":{}}',
+          )
+          request(
+              "POST",
+              "/bindings/%2F/e/input/q/input-smoke",
+              b'{"routing_key":"/","arguments":{}}',
+          )
+
+          while True:
+              messages = request(
+                  "POST",
+                  "/queues/%2F/input-smoke/get",
+                  b'{"count":1,"ackmode":"ack_requeue_false","encoding":"auto","truncate":50000}',
+              )
+              payloads = json.loads(messages.decode("utf-8"))
+              if not payloads:
+                  time.sleep(1)
+                  continue
+
+              payload = payloads[0]["payload"]
+              publish_body = json.dumps(
+                  {
+                      "properties": {"content_type": "application/json"},
+                      "routing_key": "/",
+                      "payload": payload,
+                      "payload_encoding": "string",
+                  }
+              ).encode("utf-8")
+              request("POST", "/exchanges/%2F/output/publish", publish_body)
+              break
+          PY
+
+          relay_pid=$!
+          cleanup() {
+            kill "$relay_pid" >/dev/null 2>&1 || true
+            wait "$relay_pid" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          timeout 10m dotnet run -c "${CONFIGURATION}" --project DummyAppTests/DummyAppTests.csproj -- run test.qaas.yaml
