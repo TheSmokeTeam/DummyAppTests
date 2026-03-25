@@ -46,6 +46,12 @@ static bool ShouldUseCodeConfiguration(string[] args, out CodeExecutionMode code
 
     if (args.Length == 0)
     {
+        if (HasDefaultYamlConfiguration())
+        {
+            codeExecutionMode = default;
+            return false;
+        }
+
         codeExecutionMode = CodeExecutionMode.Run;
         return true;
     }
@@ -76,7 +82,74 @@ static string EnsureCodeBootstrapFile()
 
 static void RenderCodeTemplate()
 {
-    Console.WriteLine(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "test.qaas.yaml")));
+    var template = """
+MetaData:
+  Team: Smoke
+  System: DummyApp
+
+DataSources:
+  - Name: FromFileSystemTestData
+    Generator: FromFileSystem
+    GeneratorConfiguration:
+      DataArrangeOrder: AsciiAsc
+      FileSystem:
+        Path: TestData
+
+Sessions:
+  - Name: RabbitMqExchangeWithFromFileSystemTestData
+    Publishers:
+      - Name: Publisher
+        DataSourceNames: [FromFileSystemTestData]
+        Policies:
+          - LoadBalance:
+              Rate: 50
+        RabbitMq:
+          Host: 127.0.0.1
+          Username: admin
+          Password: admin
+          Port: 5672
+          ExchangeName: input
+          RoutingKey: /
+    Consumers:
+      - Name: Consumer
+        TimeoutMs: 5000
+        RabbitMq:
+          Host: 127.0.0.1
+          Username: admin
+          Password: admin
+          Port: 5672
+          ExchangeName: output
+          RoutingKey: /
+        Deserialize:
+          Deserializer: Json
+
+Assertions:
+  - Name: HermeticByInputOutputPercentage
+    Assertion: HermeticByInputOutputPercentage
+    SessionNames: [RabbitMqExchangeWithFromFileSystemTestData]
+    AssertionConfiguration:
+      OutputNames: [Consumer]
+      InputNames: [Publisher]
+      ExpectedPercentage: 100
+  - Name: DelayByChunks
+    Assertion: DelayByChunks
+    SessionNames: [RabbitMqExchangeWithFromFileSystemTestData]
+    AssertionConfiguration:
+      Output:
+        Name: Consumer
+        ChunkSize: 1
+      Input:
+        Name: Publisher
+        ChunkSize: 1
+      MaximumDelayMs: 5000
+""";
+
+    Console.WriteLine(template);
+}
+
+static bool HasDefaultYamlConfiguration()
+{
+    return File.Exists(Path.Combine(AppContext.BaseDirectory, "test.qaas.yaml"));
 }
 
 static bool HasExplicitTemplateConfigurationPath(IReadOnlyList<string> args)
