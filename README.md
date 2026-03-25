@@ -13,7 +13,7 @@ Sample QaaS Runner project for the YAML quick start.
 ```bash
 dotnet restore
 cd DummyAppTests
-dotnet run
+dotnet run -- run test.qaas.yaml
 ```
 
 The sample expects a local RabbitMQ broker on `127.0.0.1:5672` and a component that relays the published message from `input` to `output`, the same way the quick-start CI smoke test does.

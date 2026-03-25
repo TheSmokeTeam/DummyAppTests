@@ -128,5 +128,5 @@ jobs:
           trap cleanup EXIT
 
           pushd DummyAppTests >/dev/null
-          timeout 10m dotnet run -c "${CONFIGURATION}"
+          timeout 10m dotnet run -c "${CONFIGURATION}" -- run test.qaas.yaml
           popd >/dev/null
