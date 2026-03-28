@@ -3,3 +3,5 @@ obj/
 artifacts/
 .idea/
 .vs/
+allure-results/
+DummyAppTests/allure-results/
