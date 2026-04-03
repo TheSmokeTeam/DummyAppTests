@@ -131,5 +131,4 @@ executionBuilder
     .AddSession(session)
     .AddAssertion(hermeticAssertion)
     .AddAssertion(delayAssertion);
-
 runner.Run();
