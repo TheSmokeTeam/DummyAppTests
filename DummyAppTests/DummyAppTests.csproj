@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="QaaS.Common.Assertions" Version="3.3.0" />
     <PackageReference Include="QaaS.Common.Generators" Version="3.3.0" />
-    <PackageReference Include="QaaS.Runner" Version="4.3.1-alpha.2" />
+    <PackageReference Include="QaaS.Runner" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
