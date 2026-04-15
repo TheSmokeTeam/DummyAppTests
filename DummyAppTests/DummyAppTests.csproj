@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="QaaS.Common.Assertions" Version="3.3.1" />
     <PackageReference Include="QaaS.Common.Generators" Version="3.3.1" />
-    <PackageReference Include="QaaS.Runner" Version="4.3.1" />
+    <PackageReference Include="QaaS.Runner" Version="4.3.2" />
   </ItemGroup>
 
   <ItemGroup>
