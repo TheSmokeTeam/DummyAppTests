@@ -5,8 +5,8 @@ Sample QaaS Runner project for the YAML quick start.
 ## What It Does
 
 - loads one request payload from `DummyAppTests/TestData/input.json`
-- publishes the payload to RabbitMQ `input` and consumes it from RabbitMQ `output`
-- validates hermeticity and delay with `HermeticByInputOutputPercentage` and `DelayByChunks`
+- publishes the payload to RabbitMQ `dummy-app-tests-input` and consumes it from RabbitMQ `dummy-app-tests-output`
+- validates hermeticity and a 10-second delay window with `HermeticByInputOutputPercentage` and `DelayByChunks`
 
 ## Run
 

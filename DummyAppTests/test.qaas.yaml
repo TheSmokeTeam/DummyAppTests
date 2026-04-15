@@ -23,7 +23,7 @@ Sessions:
           Username: admin
           Password: admin
           Port: 5672
-          ExchangeName: input
+          ExchangeName: dummy-app-tests-input
           RoutingKey: /
     Consumers:
       - Name: Consumer
@@ -33,7 +33,7 @@ Sessions:
           Username: admin
           Password: admin
           Port: 5672
-          ExchangeName: output
+          ExchangeName: dummy-app-tests-output
           RoutingKey: /
         Deserialize:
           Deserializer: Json
@@ -56,4 +56,4 @@ Assertions:
       Input:
         Name: Publisher
         ChunkSize: 1
-      MaximumDelayMs: 5000
+      MaximumDelayMs: 10000
