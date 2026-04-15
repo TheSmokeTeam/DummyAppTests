@@ -10,6 +10,8 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   CONFIGURATION: Release
+  INPUT_EXCHANGE: dummy-app-tests-input
+  OUTPUT_EXCHANGE: dummy-app-tests-output
 
 jobs:
   build-smoke:
@@ -83,8 +85,8 @@ jobs:
               raise SystemExit("RabbitMQ management API never became ready.")
 
           exchange_def = b'{"type":"direct","auto_delete":false,"durable":false,"internal":false,"arguments":{}}'
-          request("PUT", "/exchanges/%2F/input", exchange_def)
-          request("PUT", "/exchanges/%2F/output", exchange_def)
+          request("PUT", "/exchanges/%2F/${{ env.INPUT_EXCHANGE }}", exchange_def)
+          request("PUT", "/exchanges/%2F/${{ env.OUTPUT_EXCHANGE }}", exchange_def)
           request(
               "PUT",
               "/queues/%2F/input-smoke",
@@ -92,7 +94,7 @@ jobs:
           )
           request(
               "POST",
-              "/bindings/%2F/e/input/q/input-smoke",
+              "/bindings/%2F/e/${{ env.INPUT_EXCHANGE }}/q/input-smoke",
               b'{"routing_key":"/","arguments":{}}',
           )
 
@@ -116,7 +118,7 @@ jobs:
                       "payload_encoding": "string",
                   }
               ).encode("utf-8")
-              request("POST", "/exchanges/%2F/output/publish", publish_body)
+              request("POST", "/exchanges/%2F/${{ env.OUTPUT_EXCHANGE }}/publish", publish_body)
               break
           PY
 
