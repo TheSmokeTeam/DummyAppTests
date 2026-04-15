@@ -85,23 +85,19 @@ var session = new SessionBuilder()
 
 var hermeticAssertion = new AssertionBuilder
     {
-        AssertionInstance = null!,
-        Reporter = null!
+        AssertionInstance = null!, Reporter = null!
     }
     .Named("HermeticByInputOutputPercentage")
     .HookNamed(nameof(HermeticByInputOutputPercentage))
     .AddSessionName(session.Name!)
     .Configure(new HermeticByInputOutputPercentageConfiguration
     {
-        OutputNames = [consumer.Name!],
-        InputNames = [publisher.Name!],
-        ExpectedPercentage = 100
+        OutputNames = [consumer.Name!], InputNames = [publisher.Name!], ExpectedPercentage = 100
     });
 
 var delayAssertion = new AssertionBuilder
     {
-        AssertionInstance = null!,
-        Reporter = null!
+        AssertionInstance = null!, Reporter = null!
     }
     .Named("DelayByChunks")
     .HookNamed(nameof(DelayByChunks))
@@ -110,13 +106,11 @@ var delayAssertion = new AssertionBuilder
     {
         Output = new Chunk
         {
-            Name = consumer.Name!,
-            ChunkSize = 1
+            Name = consumer.Name!, ChunkSize = 1
         },
         Input = new Chunk
         {
-            Name = publisher.Name!,
-            ChunkSize = 1
+            Name = publisher.Name!, ChunkSize = 1
         },
         MaximumDelayMs = 10000
     });
@@ -124,11 +118,11 @@ var delayAssertion = new AssertionBuilder
 executionBuilder
     .WithMetadata(new MetaDataConfig
     {
-        Team = "Smoke",
-        System = "DummyApp"
+        Team = "Smoke", System = "DummyApp"
     })
     .AddDataSource(dataSource)
     .AddSession(session)
     .AddAssertion(hermeticAssertion)
     .AddAssertion(delayAssertion);
+
 runner.Run();
