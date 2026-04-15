@@ -8,7 +8,7 @@ Sample QaaS Runner project for the code quick start.
 - keeps an empty `DummyAppTests/test.qaas.yaml` only so `Bootstrap.New(...)` can expose one execution builder
 - loads one request payload from `DummyAppTests/TestData/input.json`
 - publishes the payload to RabbitMQ `dummy-app-tests-input` and consumes it from `dummy-app-tests-output`
-- validates hermeticity and delay with `HermeticByInputOutputPercentage` and `DelayByChunks`
+- validates hermeticity and a 10-second delay window with `HermeticByInputOutputPercentage` and `DelayByChunks`
 
 ## Run
 
