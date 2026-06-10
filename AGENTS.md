@@ -20,7 +20,8 @@ The **reference QaaS.Runner testbed**: a complete YAML-defined test that publish
 ```powershell
 # prerequisite: RabbitMQ on 127.0.0.1:5672 (admin/admin) with the exchanges wired input→output
 dotnet restore
-dotnet run --project DummyAppTests -- run test.qaas.yaml
+cd DummyAppTests
+dotnet run -- run test.qaas.yaml
 ```
 
 ## Critical gotchas
